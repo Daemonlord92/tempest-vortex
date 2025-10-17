@@ -4,6 +4,8 @@ import com.horrorcore.backendv1.dtos.PostNewCharacterRequest;
 import com.horrorcore.backendv1.dtos.UpdateCharacterRequest;
 import com.horrorcore.backendv1.entities.PlayerCharacter;
 import com.horrorcore.backendv1.entities.enums.PlayerClass;
+import com.horrorcore.backendv1.exceptions.InvalidRequestException;
+import com.horrorcore.backendv1.exceptions.PlayerCharacterNotFoundException;
 import com.horrorcore.backendv1.repositories.PlayerCharacterRepository;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
@@ -123,13 +125,13 @@ public class PlayerCharacterServiceImpl implements PlayerCharacterService {
     @Override
     public PlayerCharacter getPlayerCharacterById(String id) {
         return playerCharacterRepository.findById(id).orElseThrow(()
-                -> new IllegalArgumentException("Character not found with id: " + id));
+                -> new PlayerCharacterNotFoundException("Player Character with id: " + id + " not found"));
     }
 
     @Override
     public PlayerCharacter updatePlayerCharacter(String id, UpdateCharacterRequest request) {
         PlayerCharacter existingCharacter = playerCharacterRepository.findById(id).orElseThrow(()
-                -> new IllegalArgumentException("Character not found with id: " + id));
+                -> new PlayerCharacterNotFoundException("Player Character with id: " + id + " not found"));
         existingCharacter.setName(request.name());
         existingCharacter.setPlayerClass(PlayerClass.valueOf(request.playerClass()));
         existingCharacter.setLevel(request.level());
@@ -148,7 +150,7 @@ public class PlayerCharacterServiceImpl implements PlayerCharacterService {
     @Override
     public void deletePlayerCharacter(String id) {
         if (!playerCharacterRepository.existsById(id)) {
-            throw new IllegalArgumentException("Character not found with id: " + id);
+            throw new PlayerCharacterNotFoundException("Player Character with id: " + id + " not found");
         }
         playerCharacterRepository.deleteById(id);
     }

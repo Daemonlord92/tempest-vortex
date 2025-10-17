@@ -15,7 +15,7 @@ spring:
                 order_inserts: true
                 order_updates: true
                 batch_versioned_data: true
-            ddl-auto: update
+            ddl-auto: validate
         database-platform: org.hibernate.dialect.MySQLDialect
         show-sql: true
         generate-ddl: true

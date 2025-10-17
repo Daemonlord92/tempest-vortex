@@ -3,6 +3,7 @@ package com.horrorcore.backendv1.services;
 import com.horrorcore.backendv1.dtos.CombatInformation;
 import com.horrorcore.backendv1.dtos.enums.CombatStatus;
 import com.horrorcore.backendv1.entities.*;
+import com.horrorcore.backendv1.exceptions.PlayerCharacterNotFoundException;
 import com.horrorcore.backendv1.repositories.MonsterRepository;
 import com.horrorcore.backendv1.repositories.PlayerCharacterRepository;
 import lombok.RequiredArgsConstructor;
@@ -244,8 +245,11 @@ public class CombatService {
         combatInfo.setTurnOrder(newOrder);
     }
 
-    public CombatInformation initializeCombat(PlayerCharacter player, List<Monster> monsters) {
+    public CombatInformation initializeCombat(String playerId, List<String> monsterIds) {
         Queue<AuditableEntity> turnOrder = new LinkedList<>();
+        PlayerCharacter player = playerCharacterRepository.findById(playerId)
+                .orElseThrow(() -> new PlayerCharacterNotFoundException("Player Character with id of " + playerId + " not found"));
+        List<Monster> monsters = monsterRepository.findAllById(monsterIds);
 
         // Simple turn order - could be enhanced with initiative/agility checks
         turnOrder.offer(player);
